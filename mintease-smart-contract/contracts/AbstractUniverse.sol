@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MintEaseNFT is ERC721URIStorage, Ownable {
+contract AbstractUniverse is ERC721URIStorage, Ownable {
     uint256 public tokenCounter;
 
-    constructor(address initialOwner) ERC721("MintEaseNFT", "MEFT") Ownable(initialOwner) {
+    constructor(address initialOwner) ERC721("Abstract Universe", "ASUV") Ownable(initialOwner) {
         tokenCounter = 0;
     }
 
