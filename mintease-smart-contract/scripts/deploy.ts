@@ -1,19 +1,19 @@
 import { ethers } from "hardhat";
-import { MintEaseNFT } from "../typechain-types";
+import { AbstractUniverse } from "../typechain-types";
 
 async function main() {
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
 
-  const MintEaseNFT = await ethers.getContractFactory("MintEaseNFT");
+  const AbstractUniverse = await ethers.getContractFactory("AbstractUniverse");
 
-  const mintEaseNFT = (await MintEaseNFT.deploy(
+  const abstractUniverse = (await AbstractUniverse.deploy(
     deployer.address
-  )) as MintEaseNFT;
+  )) as AbstractUniverse;
 
-  await mintEaseNFT.deploymentTransaction()?.wait();
+  await abstractUniverse.deploymentTransaction()?.wait();
 
-  console.log("MintEaseNFT deployed to:", mintEaseNFT.target);
+  console.log("AbstractUniverse deployed to:", abstractUniverse.target);
 }
 
 main()
