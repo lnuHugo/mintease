@@ -6,56 +6,135 @@ describe("AbstractUniverse Contract", function () {
   let abstractUniverse: AbstractUniverse;
   let owner: any;
   let addr1: any;
+  let addr2: any;
+
+  const maxTokenCount = 5;
+  const mintPriceInEth = 1;
+  const baseTokenURI = "https://example.com/metadata";
 
   beforeEach(async function () {
-    const AbstractUniverseFactory = await ethers.getContractFactory(
-      "AbstractUniverse"
-    );
+    const [deployer, _addr1, _addr2] = await ethers.getSigners();
+    owner = deployer;
+    addr1 = _addr1;
+    addr2 = _addr2;
 
-    [owner, addr1] = await ethers.getSigners();
+    const AbstractUniverse = await ethers.getContractFactory("AbstractUniverse");
+    abstractUniverse = await AbstractUniverse.deploy(deployer.address, maxTokenCount, mintPriceInEth, baseTokenURI);
 
-    abstractUniverse = (await AbstractUniverseFactory.deploy(
-      owner.address
-    )) as AbstractUniverse;
-
-    await abstractUniverse.deploymentTransaction()?.wait();
+    expect(await abstractUniverse.owner()).to.equal(deployer);    
   });
 
-  it("Should deploy with correct owner", async function () {
-    const contractOwner = await abstractUniverse.owner();
-    expect(contractOwner).to.equal(owner.address);
+  it("Should deploy the contract with correct parameters", async function () {
+    expect(await abstractUniverse.tokenCounter()).to.equal(0);
+    expect(await abstractUniverse.maxTokenCount()).to.equal(maxTokenCount);
+    expect(await abstractUniverse.mintPriceInWei()).to.equal(ethers.parseEther(mintPriceInEth.toString()));
   });
 
-  it("Should allow owner to mint a new NFT", async function () {
-    const tokenURI = "https://example.com/metadata/1.json";
-
-    const tx = await abstractUniverse.mintNFT(addr1.address, tokenURI);
+  it("Should allow the owner to mint a new NFT", async function () {
+    const tokenURI = await abstractUniverse.generateTokenURI(0);
+    const tx = await abstractUniverse.mintNFT(addr1.address, { value: ethers.parseEther(mintPriceInEth.toString()) });
     await tx.wait();
 
-    const uri = await abstractUniverse.tokenURI(0);
-    expect(uri).to.equal(tokenURI);
+    expect(await abstractUniverse.tokenCounter()).to.equal(1);
 
-    const nftOwner = await abstractUniverse.ownerOf(0);
-    expect(nftOwner).to.equal(addr1.address);
+    expect(await abstractUniverse.tokenURI(0)).to.equal(tokenURI);
+
+    expect(await abstractUniverse.ownerOf(0)).to.equal(addr1.address);
   });
 
-  it("Should increment tokenCounter after minting", async function () {
-    const tokenURI = "https://example.com/metadata/1.json";
+  it("Should allow the owner to update the mint price", async function () {
+    const newPriceInEth = 2;
+    await abstractUniverse.connect(owner).setMintPrice(newPriceInEth);
 
-    await abstractUniverse.mintNFT(addr1.address, tokenURI);
-
-    const counter = await abstractUniverse.tokenCounter();
-    expect(counter).to.equal(1);
+    expect(await abstractUniverse.mintPriceInWei()).to.equal(ethers.parseEther(newPriceInEth.toString()));
   });
 
-  it("Should not allow non-owner to mint NFT", async function () {
-    const tokenURI = "https://example.com/metadata/1.json";
+  it("Should not allow a non-owner to update the mint price", async function () {
+    const newPriceInEth = 2;
 
     await expect(
-      abstractUniverse.connect(addr1).mintNFT(addr1.address, tokenURI)
+        abstractUniverse.connect(addr1).setMintPrice(newPriceInEth)
     ).to.be.revertedWithCustomError(
       abstractUniverse,
       "OwnableUnauthorizedAccount"
-    );
+  );;
+    
+    const currentPrice = await abstractUniverse.mintPriceInWei();
+    expect(currentPrice).to.equal(ethers.parseEther(mintPriceInEth.toString()));
+});
+
+it("Should allow the owner to update the base URI", async function () {
+  const newBaseURI = "https://newbaseuri.com/metadata";
+  
+  await abstractUniverse.connect(owner).setBaseTokenURI(newBaseURI);
+
+  const tokenURI = await abstractUniverse.generateTokenURI(0);
+  expect(tokenURI).to.equal("https://newbaseuri.com/metadata/0.json");
+});
+
+  it("Should allow the owner to set a price for an NFT and allow it to be bought", async function () {
+    const tokenId = 0;
+    const priceInWei = ethers.parseEther("2");
+
+    const mintTx = await abstractUniverse.connect(owner).mintNFT(addr1.address, { value: ethers.parseEther("1") });
+    await mintTx.wait();
+
+    await abstractUniverse.connect(addr1).setTokenPrice(tokenId, priceInWei);
+
+    expect(await abstractUniverse.tokenPrices(tokenId)).to.equal(priceInWei);
+
+    const balanceBefore = await ethers.provider.getBalance(addr1.address);
+
+    const buyTx = await abstractUniverse.connect(addr2).buyNFT(tokenId, { value: priceInWei });
+    await buyTx.wait();
+
+    expect(await abstractUniverse.ownerOf(tokenId)).to.equal(addr2.address);
+
+    const balanceAfter = await ethers.provider.getBalance(addr1.address);
+
+    expect(balanceAfter - balanceBefore).to.equal(priceInWei);
+});
+
+
+  it("Should not allow a non-owner to set a price for an NFT", async function () {
+    const tokenId = 0;
+    const priceInWei = ethers.parseEther("2");
+
+    const mintTx = await abstractUniverse.connect(addr1).mintNFT(addr1.address, { value: ethers.parseEther("1") });
+    await mintTx.wait();
+
+    await expect(
+      abstractUniverse.connect(addr2).setTokenPrice(tokenId, priceInWei)
+    ).to.be.revertedWith("You are not the owner of this NFT");
   });
+
+  it("Should return all tokens", async function () {
+    await abstractUniverse.mintNFT(addr1.address, { value: ethers.parseEther(mintPriceInEth.toString()) });
+    await abstractUniverse.mintNFT(addr2.address, { value: ethers.parseEther(mintPriceInEth.toString()) });
+
+    const allTokens = await abstractUniverse.getAllTokens();
+    expect(allTokens.length).to.equal(2);
+  });
+
+  it("Should return tokens for sale", async function () {
+    const tokenId = 0;
+    const priceInWei = ethers.parseEther("2");
+
+    const mintTx = await abstractUniverse.connect(addr1).mintNFT(addr1.address, { value: ethers.parseEther("1") });
+    await mintTx.wait();
+
+    await abstractUniverse.connect(addr1).setTokenPrice(tokenId, priceInWei);
+
+    const tokensForSale = await abstractUniverse.getTokensForSale();
+    expect(tokensForSale.length).to.equal(1);
+    expect(tokensForSale[0]).to.equal(tokenId);
+  });
+
+  it("Should correctly convert uint to string", async function () {
+    const tokenId = 123;
+    const expectedString = "123";
+
+    const tokenURI = await abstractUniverse.generateTokenURI(tokenId);
+    expect(tokenURI).to.include(expectedString);
+});
 });
