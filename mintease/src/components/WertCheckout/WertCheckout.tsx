@@ -21,7 +21,7 @@ const WertCheckout: React.FC<WertCheckoutProps> = ({ address, contractAddress, t
       partner_id: partnerId,
       origin: "https://sandbox.wert.io",
       address: address,
-      commodity: "ETH",
+      commodity: "nft",
       commodity_amount: "0.01",
       contract_address: contractAddress,
       token_id: tokenId,
