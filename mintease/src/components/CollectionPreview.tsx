@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ethers } from "ethers";
-import { getMintPrice, mintNFT } from "../../utils/contract";
-import { connectWallet } from "../../utils/metamask";
+import { getMintPrice, mintNFT } from "../utils/contract";
+import { connectWallet } from "../utils/metamask";
 
 interface CollectionPreviewProps {
   collectionName: string;

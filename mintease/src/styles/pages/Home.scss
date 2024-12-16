@@ -1,0 +1,72 @@
+.home {
+    width: 100%;
+    display: inline-block;
+  h1 {
+    width: 50%;
+  }
+
+  .main-content {
+    position: relative;
+    display: flex;
+    width: 100%;
+    
+  
+    .text-section {
+      h1 {
+        padding-top: 64px;
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    .circle-div {
+        position: relative;
+        width: 624px;
+        height: 464px;
+
+        .circle {
+            position: absolute;
+            opacity: 0.5;
+            width: 400px;
+            height: 400px;
+        
+            &.circlegreen {
+              top: 0;
+              left: 0;
+            }
+        
+            &.circlemint {
+              top: 64px;
+              left: 224px;
+            }
+          }
+    }
+  
+    .image-div {
+      position: relative;
+      width: 100%;
+      padding-top: 128px;
+
+      .image1,
+      .image2 {
+        position: absolute;
+        width: 384px;
+        height: 384px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        
+      }
+  
+      .image1 {
+        right: 200px;
+        top: 300px;
+        z-index: 2;
+      }
+  
+      .image2 {
+        right: 0;
+        z-index: 1;
+      }
+    }
+  }
+  
+}
