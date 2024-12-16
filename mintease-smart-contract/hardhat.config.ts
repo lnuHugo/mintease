@@ -11,6 +11,10 @@ const config: HardhatUserConfig = {
       url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
+    hardhat: {
+      chainId: 31337,
+      allowUnlimitedContractSize: true,
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,

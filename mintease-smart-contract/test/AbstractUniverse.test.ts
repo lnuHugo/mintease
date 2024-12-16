@@ -12,6 +12,14 @@ describe("AbstractUniverse Contract", function () {
   const mintPriceInEth = 1;
   const baseTokenURI = "https://example.com/metadata";
 
+  const predefinedURIs = [
+    "https://gateway.pinata.cloud/ipfs/QmR7mZdjawmz6rsT2thrqpbniuuT1bKc2CJoCMPVXeoPXW",
+    "https://gateway.pinata.cloud/ipfs/QmdGg2nHbU62UTdWqZ9u7pLiYDE8Qss2hoFQ2f4e8YycvZ",
+    "https://gateway.pinata.cloud/ipfs/QmZkPAsjZsSmfVsb7PQUHE2hZfKfdqbg7hmJf3DQXcuXGh",
+    "https://gateway.pinata.cloud/ipfs/QmeCXArEcnyYbsxVmCiTtqUQZCz8iAxHxSnwhZJKJqPTPW",
+    "https://gateway.pinata.cloud/ipfs/QmVy6JTmugVrC5EdvznxQwoxKRoVykaMA7b4VRwva9qbfG",
+];
+
   beforeEach(async function () {
     const [deployer, _addr1, _addr2] = await ethers.getSigners();
     owner = deployer;
@@ -19,7 +27,7 @@ describe("AbstractUniverse Contract", function () {
     addr2 = _addr2;
 
     const AbstractUniverse = await ethers.getContractFactory("AbstractUniverse");
-    abstractUniverse = await AbstractUniverse.deploy(deployer.address, maxTokenCount, mintPriceInEth, baseTokenURI);
+    abstractUniverse = await AbstractUniverse.deploy(deployer.address, maxTokenCount, mintPriceInEth, predefinedURIs);
 
     expect(await abstractUniverse.owner()).to.equal(deployer);    
   });
@@ -30,15 +38,21 @@ describe("AbstractUniverse Contract", function () {
     expect(await abstractUniverse.mintPriceInWei()).to.equal(ethers.parseEther(mintPriceInEth.toString()));
   });
 
-  it("Should allow the owner to mint a new NFT", async function () {
-    const tokenURI = await abstractUniverse.generateTokenURI(0);
-    const tx = await abstractUniverse.mintNFT(addr1.address, { value: ethers.parseEther(mintPriceInEth.toString()) });
+  it("Should mint an NFT correctly", async function () {
+    // Mint NFT
+    const tx = await abstractUniverse.connect(addr1).mintNFT(addr1.address, {
+      value: ethers.parseEther(mintPriceInEth.toString()),
+    });
     await tx.wait();
 
+    // Verifiera att tokenCounter har ökat
     expect(await abstractUniverse.tokenCounter()).to.equal(1);
 
-    expect(await abstractUniverse.tokenURI(0)).to.equal(tokenURI);
+    // Verifiera att tokenURI för tokenId 0 är korrekt
+    const tokenURI = await abstractUniverse.tokenURI(0);
+    expect(tokenURI).to.equal(predefinedURIs[0]);
 
+    // Verifiera att ägaren av NFT:n är addr1
     expect(await abstractUniverse.ownerOf(0)).to.equal(addr1.address);
   });
 

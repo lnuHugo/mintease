@@ -3,6 +3,8 @@ import "./styles/App.scss";
 import { connectWallet, disconnectWallet } from "./utils/metamask";
 import WertCheckout from "./components/WertCheckout/WertCheckout";
 import { getTokenCounter } from "./utils/contract";
+import CollectionPreview from "./components/CollectionPreview/CollectionPreview";
+import { ethers } from "ethers";
 
 function App() {
 const [address, setAddress] = useState<null | string>(null)
@@ -43,7 +45,12 @@ const tokenId = "1";
       <>
       <button onClick={handleDisconnect}>Disconnect</button>
       <p>{address}</p>
-      <WertCheckout address={address} contractAddress={contractAddress} tokenId={tokenId}/>
+      {/* <WertCheckout address={address} contractAddress={contractAddress} tokenId={tokenId}/> */}
+      <CollectionPreview
+        collectionName="Abstract Universe"
+        imageURL="https://gateway.pinata.cloud/ipfs/QmExampleHash/0.png"
+        mintPriceInWei={ethers.parseEther("0.1").toString()} // Exempel: 0.1 ETH
+      />
       </>}
       {tokenCounter && <p>{tokenCounter}</p>}
     </div>

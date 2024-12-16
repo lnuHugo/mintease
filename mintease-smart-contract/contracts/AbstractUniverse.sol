@@ -8,7 +8,7 @@ contract AbstractUniverse is ERC721URIStorage, Ownable {
     uint256 public tokenCounter;
     uint256 public maxTokenCount;
     uint256 public mintPriceInWei;
-    string private baseTokenURI;
+    string[] private predefinedTokenURIs;
 
     mapping(uint256 => uint256) public tokenPrices;
     mapping(uint256 => address) public tokenSellers;
@@ -17,12 +17,13 @@ contract AbstractUniverse is ERC721URIStorage, Ownable {
         address initialOwner,
         uint256 _maxTokenCount,
         uint256 _mintPriceInEth,
-        string memory _baseTokenURI
+        string[] memory _predefinedURIs
     ) ERC721("Abstract Universe", "ASUV") Ownable(initialOwner) {
+        require(_predefinedURIs.length == _maxTokenCount, "URI count must match maxTokenCount");
         tokenCounter = 0;
         maxTokenCount = _maxTokenCount;
         mintPriceInWei = _mintPriceInEth * 1 ether;
-        baseTokenURI = _baseTokenURI;
+        predefinedTokenURIs = _predefinedURIs;
     }
 
     function mintNFT(address recipient) public payable returns (uint256) {
@@ -31,23 +32,10 @@ contract AbstractUniverse is ERC721URIStorage, Ownable {
 
         uint256 newTokenId = tokenCounter;
         _safeMint(recipient, newTokenId);
-        _setTokenURI(newTokenId, generateTokenURI(newTokenId));
+        _setTokenURI(newTokenId, predefinedTokenURIs[tokenCounter]);
 
         tokenCounter += 1;
         return newTokenId;
-    }
-
-    function generateTokenURI(
-        uint256 tokenId
-    ) public view returns (string memory) {
-        return
-            string(
-                abi.encodePacked(baseTokenURI, "/", uint2str(tokenId), ".json")
-            );
-    }
-
-    function setBaseTokenURI(string memory _baseTokenURI) public onlyOwner {
-        baseTokenURI = _baseTokenURI;
     }
 
     function setMintPrice(uint256 _mintPriceInEth) public onlyOwner {
@@ -75,26 +63,6 @@ contract AbstractUniverse is ERC721URIStorage, Ownable {
 
         tokenPrices[tokenId] = 0;
         tokenSellers[tokenId] = address(0);
-    }
-
-    function uint2str(uint256 _i) internal pure returns (string memory) {
-        if (_i == 0) {
-            return "0";
-        }
-
-        uint256 temp = _i;
-        uint256 digits;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
-        }
-        bytes memory buffer = new bytes(digits);
-        while (_i != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + uint256(_i % 10)));
-            _i /= 10;
-        }
-        return string(buffer);
     }
 
     function getAllTokens() public view returns (uint256[] memory) {

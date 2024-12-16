@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { checkContractExists } from "./contract";
 
 declare global {
   interface Window {
@@ -10,6 +11,7 @@ export const connectWallet = async (): Promise<string | null> => {
   if (window.ethereum) {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
+      checkContractExists()
       const accounts = await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();   
