@@ -1,0 +1,68 @@
+.mint-card {
+  width: 670px;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  gap: 32px;
+  border: 1px solid #d2d2d2;
+  background-color: white;
+
+  .preview {
+    width: 230px;
+    height: 230px;
+    border-radius: 4px;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      h2 {
+      }
+
+      p {
+      }
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .price {
+        display: flex;
+        gap: -2px;
+        align-items: center;
+        img {
+          width: 26px;
+          height: 26px;
+        }
+
+        p {
+        }
+      }
+
+      button {
+        padding: 8px;
+        border: none;
+        background-color: black;
+        color: white;
+        cursor: pointer;
+        width: 100%;
+
+        &:hover {
+          background-color: rgb(47, 47, 47);
+        }
+
+        &:disabled {
+        }
+      }
+    }
+  }
+}

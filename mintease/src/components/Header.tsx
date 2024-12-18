@@ -1,17 +1,20 @@
 import { Link, NavLink } from "react-router-dom";
-import "../styles/components/Header.scss"
+import "../styles/components/Header.scss";
 
 const Header = () => {
   return (
     <header className="header">
-        <p className="project-name">MintEase</p>
+      <p className="project-name">MintEase</p>
       <nav>
         <ul>
           <li>
-            <NavLink to="/">Home</NavLink>
+            <NavLink to="/marketplace">Marketplace</NavLink>
           </li>
           <li>
-            <NavLink to="/about">About</NavLink>
+            <NavLink to="/mint">Mint</NavLink>
+          </li>
+          <li>
+            <NavLink to="/sell">Sell</NavLink>
           </li>
           <li>
             <button>Connect</button>

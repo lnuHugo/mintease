@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 import { useState, useEffect } from "react";
-import CollectionPreview from "../components/CollectionPreview";
 import { getTokenCounter } from "../utils/contract";
 import { connectWallet, disconnectWallet } from "../utils/metamask";
 import "../styles/pages/Home.scss";
+import MintCard from "../components/MintCard";
 
 const Home = () => {
   const [address, setAddress] = useState<null | string>(null);
@@ -38,42 +38,36 @@ const Home = () => {
 
   return (
     <div className="home">
-      <section className="main-content">
-        <div>
-          <div className="text-section">
-            <h1>Where digital art meets fiat payments</h1>
-          </div>
-          <div className="circle-div">
-            <img className="circle circlegreen" src="/greencircle.svg" alt="" />
-            <img className="circle circlemint" src="/mintcircle.svg" alt="" />
-          </div>
+      <section className="hero">
+        <div className="text">
+          <h1>
+            Mint Your <span className="nft">NFT</span>
+            <br /> with <span>Ease</span>
+          </h1>
+          <p>
+            The simplest platform to mint and purchase NFTs using fiat payments.
+            No crypto wallet? No problem.
+          </p>
         </div>
-
-        <div className="image-div">
-          <img
-            src="/abstractuniverse1.png"
-            alt="Art 1"
-            className="image1"
-          />
-          <img
-            src="/abstractuniverse2.png"
-            alt="Art 2"
-            className="image2"
-          />
+        <div className="buttons">
+          <button className="btn-standard">Explore Collection</button>
+          <button className="btn-outline">List Artwork</button>
         </div>
       </section>
-
+      <section className="mint-section">
+        <h2>Get Started with Abstract Universe</h2>
+        <MintCard
+          collectionName="Abstract Universe"
+          imageURL="https://gateway.pinata.cloud/ipfs/QmRU4pAAWQrDzvsgSvnQm14fi5odcF9vCBkpUZjJNfeh4c"
+          mintPriceInWei={ethers.parseEther("0.1").toString()} // Exempel: 0.1 ETH
+        />
+      </section>
       {!address && <button onClick={handleConnect}>Connect</button>}
       {address && (
         <>
           <button onClick={handleDisconnect}>Disconnect</button>
           <p>{address}</p>
           {/* <WertCheckout address={address} contractAddress={contractAddress} tokenId={tokenId}/> */}
-          <CollectionPreview
-            collectionName="Abstract Universe"
-            imageURL="https://gateway.pinata.cloud/ipfs/QmExampleHash/0.png"
-            mintPriceInWei={ethers.parseEther("0.1").toString()} // Exempel: 0.1 ETH
-          />
         </>
       )}
       {tokenCounter && <p>{tokenCounter}</p>}
