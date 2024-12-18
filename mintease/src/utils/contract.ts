@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import AbstractUniverseABI from "../abi/AbstractUniverseABI.json";
+import { NFT } from "../data/interface";
 
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
-console.log(contractAddress);
 
 const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
 
@@ -98,6 +98,70 @@ export const mintNFT = async (recipient: string, mintPriceInEth: string) => {
     return tx;
   } catch (error) {
     console.error("Minting failed:", error);
+    throw error;
+  }
+};
+
+export const getOwnedNFTs = async (address: string): Promise<NFT[]> => {
+  const nftList: NFT[] = [];
+  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+
+  const contract = new ethers.Contract(
+    contractAddress,
+    AbstractUniverseABI,
+    provider
+  );
+
+  try {
+    const allTokens = await contract.getAllTokens();
+
+    for (const tokenId of allTokens) {
+      const owner = await contract.ownerOf(tokenId);
+
+      if (owner.toLowerCase() === address.toLowerCase()) {
+        const tokenURI = await contract.tokenURI(tokenId);
+
+        const response = await fetch(tokenURI);
+        const metadata = await response.json();
+
+        nftList.push({
+          tokenId: tokenId.toString(),
+          metadata: {
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image,
+          },
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching NFTs:", error);
+  }
+
+  return nftList;
+};
+
+export const setNFTForSale = async (
+  tokenId: number,
+  priceInEth: string
+): Promise<void> => {
+  try {
+    const contract = await connectContract();
+    if (!contract) {
+      throw new Error("Failed to connect to the contract");
+    }
+
+    const priceInWei = ethers.parseEther(priceInEth);
+
+    const tx = await contract.setTokenPrice(tokenId, priceInWei);
+
+    await tx.wait();
+
+    console.log(
+      `NFT with tokenId ${tokenId} is now listed for sale at ${priceInEth} ETH.`
+    );
+  } catch (error) {
+    console.error("Failed to set NFT for sale:", error);
     throw error;
   }
 };
