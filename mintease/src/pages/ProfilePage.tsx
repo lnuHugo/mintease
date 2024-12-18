@@ -1,27 +1,40 @@
 import { useEffect, useState } from "react";
 import "../styles/pages/ProfilePage.scss";
-import { getOwnedNFTs, setNFTForSale } from "../utils/contract";
+import {
+  getOwnedNFTs,
+  getNFTsForSaleByOwner,
+  setNFTForSale,
+} from "../utils/contract";
 import { NFT } from "../data/interface";
 
 const ProfilePage = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
+  const [nftsForSale, setNftsForSale] = useState<NFT[]>([]);
   const [prices, setPrices] = useState<{ [tokenId: string]: string }>({});
   const [submittingTokenId, setSubmittingTokenId] = useState<string | null>(
     null
   );
 
+  const userAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+
   useEffect(() => {
-    const getNfts = async () => {
+    const fetchNFTs = async () => {
       try {
-        const nfts = await getOwnedNFTs(
-          "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-        );
-        setNfts(nfts);
+        // Hämta ägda NFTs
+        const ownedNFTs = await getOwnedNFTs(userAddress);
+        setNfts(ownedNFTs);
+
+        // Hämta NFTs till försäljning
+        const forSaleNFTs = await getNFTsForSaleByOwner(userAddress);
+        console.log(forSaleNFTs);
+
+        setNftsForSale(forSaleNFTs);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching NFTs:", error);
       }
     };
-    getNfts();
+
+    fetchNFTs();
   }, []);
 
   const handlePriceChange = (tokenId: string, value: string) => {
@@ -50,44 +63,68 @@ const ProfilePage = () => {
     }
   };
 
+  const handleRemoveListing = async () => {};
+
   return (
     <div className="profile-page">
-      <div className="open-listings"></div>
-      <div className="nft-grid">
-        {nfts &&
-          nfts.map((nft, index) => (
-            <div key={index} className="nft-card">
-              <img
-                src={nft.metadata.image}
-                alt={nft.metadata.name}
-                className="nft-image"
-              />
-              <h3>{nft.metadata.name}</h3>
-              <div className="sell-div">
-                <input
-                  type="number"
-                  placeholder="Enter price in ETH"
-                  step={0.01}
-                  min={0}
-                  value={prices[nft.tokenId] || ""}
-                  onChange={(e) =>
-                    handlePriceChange(nft.tokenId, e.target.value)
-                  }
-                  disabled={submittingTokenId === nft.tokenId}
+      <div className="nft-section">
+        <h2>Your NFTs</h2>
+        <div className="nft-grid">
+          {nfts &&
+            nfts.map((nft, index) => (
+              <div key={index} className="nft-card">
+                <img
+                  src={nft.metadata.image}
+                  alt={nft.metadata.name}
+                  className="nft-image"
                 />
-                <button
-                  onClick={() => handleSubmit(nft.tokenId)}
-                  disabled={
-                    submittingTokenId === nft.tokenId || !prices[nft.tokenId]
-                  }
-                >
-                  {submittingTokenId === nft.tokenId
-                    ? "Submitting..."
-                    : "List for Sale"}
-                </button>
+                <h3>{nft.metadata.name}</h3>
+                <div className="sell-div">
+                  <input
+                    type="number"
+                    placeholder="Enter price in ETH"
+                    value={prices[nft.tokenId] || ""}
+                    onChange={(e) =>
+                      handlePriceChange(nft.tokenId, e.target.value)
+                    }
+                    disabled={submittingTokenId === nft.tokenId}
+                  />
+                  <button
+                    onClick={() => handleSubmit(nft.tokenId)}
+                    disabled={
+                      submittingTokenId === nft.tokenId || !prices[nft.tokenId]
+                    }
+                  >
+                    {submittingTokenId === nft.tokenId
+                      ? "Submitting..."
+                      : "List for Sale"}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+        </div>
+      </div>
+
+      <div className="nft-section">
+        <h2>NFTs for Sale</h2>
+        <div className="nft-grid">
+          {nftsForSale.length > 0 ? (
+            nftsForSale.map((nft, index) => (
+              <div key={index} className="nft-card">
+                <img
+                  src={nft.metadata.image}
+                  alt={nft.metadata.name}
+                  className="nft-image"
+                />
+                <h3>{nft.metadata.name}</h3>
+                <p>Price: {nft.price} ETH</p>
+                <button onClick={handleRemoveListing}>Remove Listing</button>
+              </div>
+            ))
+          ) : (
+            <p>No NFTs for sale.</p>
+          )}
+        </div>
       </div>
     </div>
   );

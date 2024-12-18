@@ -165,3 +165,36 @@ export const setNFTForSale = async (
     throw error;
   }
 };
+
+export const getNFTsForSaleByOwner = async (owner: string) => {
+  try {
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    const contract = new ethers.Contract(
+      contractAddress,
+      AbstractUniverseABI,
+      provider
+    );
+
+    const tokensForSale = await contract.getTokensForSale();
+    const userTokensForSale: NFT[] = [];
+
+    for (const tokenId of tokensForSale) {
+      const tokenOwner = await contract.ownerOf(tokenId);
+      if (tokenOwner.toLowerCase() === owner.toLowerCase()) {
+        const tokenURI = await contract.tokenURI(tokenId);
+        const metadata = await fetch(tokenURI).then((res) => res.json());
+        const price = ethers.formatEther(await contract.tokenPrices(tokenId)); // Hämta priset i ETH
+        userTokensForSale.push({
+          tokenId: tokenId.toString(),
+          metadata,
+          price,
+        });
+      }
+    }
+
+    return userTokensForSale;
+  } catch (error) {
+    console.error("Error fetching NFTs for sale by owner:", error);
+    throw error;
+  }
+};

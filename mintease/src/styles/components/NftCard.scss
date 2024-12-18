@@ -1,0 +1,42 @@
+.nft-card {
+  padding: 16px;
+  border: 1px solid #b4b4b4;
+  width: fit-content;
+  border-radius: 8px;
+  img {
+    border-radius: 4px;
+    width: 230px;
+    height: 230px;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      h3 {
+      }
+      div {
+        display: flex;
+        align-items: center;
+        img {
+          width: 24px;
+          height: 24px;
+        }
+        p {
+        }
+      }
+    }
+    button {
+      width: auto;
+      padding: 8px;
+      background-color: black;
+      color: white;
+      border-radius: 4px;
+    }
+  }
+}
