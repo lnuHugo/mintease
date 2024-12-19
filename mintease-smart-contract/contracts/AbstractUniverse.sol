@@ -51,6 +51,17 @@ contract AbstractUniverse is ERC721URIStorage, Ownable {
         tokenSellers[tokenId] = msg.sender;
     }
 
+    function removeNFTFromSale(uint256 tokenId) public {
+    require(
+        ownerOf(tokenId) == msg.sender,
+        "You are not the owner of this NFT"
+    );
+    require(tokenPrices[tokenId] > 0, "NFT is not listed for sale");
+
+    tokenPrices[tokenId] = 0;
+    tokenSellers[tokenId] = address(0);
+}
+
     function buyNFT(uint256 tokenId) public payable {
         uint256 price = tokenPrices[tokenId];
         address seller = tokenSellers[tokenId];

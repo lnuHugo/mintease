@@ -4,6 +4,7 @@ import {
   getOwnedNFTs,
   getNFTsForSaleByOwner,
   setNFTForSale,
+  removeNFTFromSale,
 } from "../utils/contract";
 import { NFT } from "../data/interface";
 
@@ -14,19 +15,17 @@ const ProfilePage = () => {
   const [submittingTokenId, setSubmittingTokenId] = useState<string | null>(
     null
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const userAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 
   useEffect(() => {
     const fetchNFTs = async () => {
       try {
-        // Hämta ägda NFTs
         const ownedNFTs = await getOwnedNFTs(userAddress);
         setNfts(ownedNFTs);
 
-        // Hämta NFTs till försäljning
         const forSaleNFTs = await getNFTsForSaleByOwner(userAddress);
-        console.log(forSaleNFTs);
 
         setNftsForSale(forSaleNFTs);
       } catch (error) {
@@ -35,7 +34,7 @@ const ProfilePage = () => {
     };
 
     fetchNFTs();
-  }, []);
+  }, [nfts]);
 
   const handlePriceChange = (tokenId: string, value: string) => {
     setPrices((prevPrices) => ({
@@ -63,7 +62,23 @@ const ProfilePage = () => {
     }
   };
 
-  const handleRemoveListing = async () => {};
+  const handleRemoveFromSale = async (tokenId: number) => {
+    setIsSubmitting(true);
+    try {
+      await removeNFTFromSale(tokenId);
+      alert(`NFT with tokenId ${tokenId} removed from sale.`);
+
+      setNfts((prevNfts) =>
+        prevNfts.map((nft) =>
+          Number(nft.tokenId) === tokenId ? { ...nft, price: null } : nft
+        )
+      );
+    } catch (error) {
+      alert("Failed to remove NFT from sale. See console for details.");
+      console.error(error);
+    }
+    setIsSubmitting(false);
+  };
 
   return (
     <div className="profile-page">
@@ -118,7 +133,12 @@ const ProfilePage = () => {
                 />
                 <h3>{nft.metadata.name}</h3>
                 <p>Price: {nft.price} ETH</p>
-                <button onClick={handleRemoveListing}>Remove Listing</button>
+                <button
+                  onClick={() => handleRemoveFromSale(Number(nft.tokenId))} // Använd en omslagsfunktion
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Removing..." : "Remove from Sale"}
+                </button>
               </div>
             ))
           ) : (

@@ -4,7 +4,7 @@ import { NFT } from "../data/interface";
 
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 
-const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
+// const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
 
 // const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${alchemyKey}`);
 
@@ -253,6 +253,24 @@ export const buyNFT = async (tokenId: number): Promise<void> => {
     console.log(`NFT with tokenId ${tokenId} purchased successfully!`);
   } catch (error) {
     console.error("Error purchasing NFT:", error);
+    throw error;
+  }
+};
+
+export const removeNFTFromSale = async (tokenId: number): Promise<void> => {
+  try {
+    const contract = await connectContract();
+
+    if (!contract) {
+      throw new Error("Failed to connect to contract");
+    }
+
+    const tx = await contract.removeNFTFromSale(tokenId);
+    await tx.wait();
+
+    console.log(`NFT with tokenId ${tokenId} removed from sale successfully.`);
+  } catch (error) {
+    console.error("Error removing NFT from sale:", error);
     throw error;
   }
 };

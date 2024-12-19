@@ -5,5 +5,5 @@ export interface NFT {
     description: string;
     image: string;
   };
-  price?: string;
+  price?: string | null;
 }
