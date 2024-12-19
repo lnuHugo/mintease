@@ -5,6 +5,7 @@ import { buyNFT, getNFTsForSale } from "../utils/contract";
 
 const Marketplace = () => {
   const [nftsForSale, setNftsForSale] = useState<any[]>([]);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -15,9 +16,22 @@ const Marketplace = () => {
     fetchListings();
   }, []);
 
-  const handleBuyNFT = async (tokenId: number) => {
-    console.log(typeof tokenId);
+  const sortNfts = () => {
+    const sortedNfts = [...nftsForSale].sort((a, b) => {
+      const priceA = parseFloat(a.price || "0");
+      const priceB = parseFloat(b.price || "0");
 
+      if (sortOrder === "asc") {
+        return priceA - priceB;
+      } else {
+        return priceB - priceA;
+      }
+    });
+
+    setNftsForSale(sortedNfts);
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+  const handleBuyNFT = async (tokenId: number) => {
     try {
       await buyNFT(tokenId);
       alert(`NFT with tokenId ${tokenId} purchased successfully!`);
@@ -34,9 +48,16 @@ const Marketplace = () => {
     <div className="marketplace">
       <h3>Nfts for Sale</h3>
       <div className="filter-div">
-        <div className="sort">
-          <p>Price low to high</p>
-          <img src="/nav-arrow-down.svg" alt="" />
+        <div className="sort" onClick={sortNfts}>
+          <p>
+            {sortOrder === "asc" ? "Price low to high" : "Price high to low"}
+          </p>
+          <img
+            src={
+              sortOrder === "asc" ? "/nav-arrow-down.svg" : "/nav-arrow-up.svg"
+            }
+            alt=""
+          />
         </div>
         <div className="icon">
           <img src="/2x2-cell.svg" alt="" />
@@ -48,18 +69,20 @@ const Marketplace = () => {
           <img src="/table.svg" alt="" />
         </div>
       </div>
-      {nftsForSale.length > 0 ? (
-        nftsForSale.map((nft, index) => (
-          <NftCard
-            key={index}
-            nft={nft}
-            buttonText="Buy Now"
-            onButtonClick={() => handleBuyNFT(Number(nft.tokenId))}
-          />
-        ))
-      ) : (
-        <p>No NFTs for sale.</p>
-      )}
+      <div className="card-grid">
+        {nftsForSale.length > 0 ? (
+          nftsForSale.map((nft, index) => (
+            <NftCard
+              key={index}
+              nft={nft}
+              buttonText="Buy Now"
+              onButtonClick={() => handleBuyNFT(Number(nft.tokenId))}
+            />
+          ))
+        ) : (
+          <p>No NFTs for sale.</p>
+        )}
+      </div>
     </div>
   );
 };
