@@ -198,3 +198,61 @@ export const getNFTsForSaleByOwner = async (owner: string) => {
     throw error;
   }
 };
+
+export const getNFTsForSale = async () => {
+  try {
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    const contract = new ethers.Contract(
+      contractAddress,
+      AbstractUniverseABI,
+      provider
+    );
+
+    const tokensForSale = await contract.getTokensForSale();
+    const nftsForSale = [];
+
+    for (const tokenId of tokensForSale) {
+      const tokenURI = await contract.tokenURI(tokenId);
+      const metadata = await fetch(tokenURI).then((res) => res.json());
+      const price = ethers.formatEther(await contract.tokenPrices(tokenId)); // Hämta pris i ETH
+
+      nftsForSale.push({
+        tokenId: tokenId.toString(),
+        metadata,
+        price,
+      });
+    }
+
+    return nftsForSale;
+  } catch (error) {
+    console.error("Error fetching NFTs for sale:", error);
+    throw error;
+  }
+};
+
+export const buyNFT = async (tokenId: number): Promise<void> => {
+  try {
+    const contract = await connectContract();
+
+    if (!contract) {
+      throw new Error("Failed to connect to the contract");
+    }
+
+    const price: bigint = await contract.tokenPrices(tokenId);
+
+    if (!price || price === 0n) {
+      throw new Error("NFT is not listed for sale.");
+    }
+
+    const tx = await contract.buyNFT(tokenId, {
+      value: price,
+    });
+
+    await tx.wait();
+
+    console.log(`NFT with tokenId ${tokenId} purchased successfully!`);
+  } catch (error) {
+    console.error("Error purchasing NFT:", error);
+    throw error;
+  }
+};
