@@ -1,0 +1,32 @@
+.mint-page {
+  display: flex;
+  flex-direction: column;
+  padding: 0 80px;
+
+  .image-container {
+    position: relative; // Viktigt för att positionera texten relativt bilden
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    border-radius: 12px;
+
+    .text-div {
+      padding: 64px;
+      border-radius: 12px;
+      background-color: rgba(0, 0, 0, 0.6);
+      position: absolute;
+      top: 50%; // Flytta till mitten vertikalt
+      left: 50%; // Flytta till mitten horisontellt
+      transform: translate(-50%, -50%); // Justera för att centrera exakt
+      color: white; // Gör texten läsbar
+      text-align: center; // Centrera texten i blocket
+      z-index: 2; // Placera ovanpå bilden
+    }
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: auto; // Se till att bilden inte förvrängs
+    }
+  }
+}

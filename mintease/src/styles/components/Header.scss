@@ -32,17 +32,26 @@
           button {
             background-color: #d9d9d9;
             border-radius: 12px;
-            padding: 8px 32px;
+            padding: 8px 32px 8px 16px;
             border: none;
             font-size: 16px;
-          }
-        }
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            width: fit-content;
+            cursor: pointer;
 
-        a {
-          text-decoration: none;
-          display: inline-block;
+            img {
+              width: 20px;
+              height: 20px;
+            }
+          }
         }
       }
     }
+  }
+  a {
+    text-decoration: none;
+    display: inline-block;
   }
 }

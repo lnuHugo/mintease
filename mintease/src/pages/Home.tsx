@@ -59,7 +59,7 @@ const Home = () => {
         <MintCard
           collectionName="Abstract Universe"
           imageURL="https://gateway.pinata.cloud/ipfs/QmRU4pAAWQrDzvsgSvnQm14fi5odcF9vCBkpUZjJNfeh4c"
-          mintPriceInWei={ethers.parseEther("0.1").toString()} // Exempel: 0.1 ETH
+          mintPriceInWei={ethers.parseEther("0.01").toString()}
         />
       </section>
       {!address && <button onClick={handleConnect}>Connect</button>}

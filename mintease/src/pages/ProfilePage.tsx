@@ -7,6 +7,7 @@ import {
   removeNFTFromSale,
 } from "../utils/contract";
 import { NFT } from "../data/interface";
+import { useWallet } from "../context/WalletContext";
 
 const ProfilePage = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
@@ -16,16 +17,16 @@ const ProfilePage = () => {
     null
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const userAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+  const { walletAddress } = useWallet();
 
   useEffect(() => {
     const fetchNFTs = async () => {
       try {
-        const ownedNFTs = await getOwnedNFTs(userAddress);
+        if (!walletAddress) return;
+        const ownedNFTs = await getOwnedNFTs(walletAddress);
         setNfts(ownedNFTs);
 
-        const forSaleNFTs = await getNFTsForSaleByOwner(userAddress);
+        const forSaleNFTs = await getNFTsForSaleByOwner(walletAddress);
 
         setNftsForSale(forSaleNFTs);
       } catch (error) {
@@ -52,7 +53,7 @@ const ProfilePage = () => {
         return;
       }
 
-      await setNFTForSale(parseInt(id), price); // Konvertera tokenId till nummer om det krävs i kontraktet
+      await setNFTForSale(parseInt(id), price);
       alert(`NFT with tokenId ${id} is now listed for ${price} ETH.`);
     } catch (error) {
       alert("Failed to list NFT for sale. See console for details.");
@@ -134,7 +135,7 @@ const ProfilePage = () => {
                 <h3>{nft.metadata.name}</h3>
                 <p>Price: {nft.price} ETH</p>
                 <button
-                  onClick={() => handleRemoveFromSale(Number(nft.tokenId))} // Använd en omslagsfunktion
+                  onClick={() => handleRemoveFromSale(Number(nft.tokenId))}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Removing..." : "Remove from Sale"}

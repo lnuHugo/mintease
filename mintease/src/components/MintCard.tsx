@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { getMintPrice, mintNFT } from "../utils/contract";
 import { connectWallet } from "../utils/metamask";
@@ -25,7 +25,12 @@ const MintCard: React.FC<MintCardProps> = ({
       if (recipient == null) return;
 
       const mintPrice = await getMintPrice();
-      await mintNFT(recipient, mintPrice);
+      console.log(mintPrice);
+
+      const mintPriceInEth = ethers.formatEther(mintPrice);
+      console.log(mintPriceInEth);
+
+      await mintNFT(recipient, mintPriceInEth);
       alert("NFT successfully minted!");
     } catch (error) {
       console.error("Minting failed:", error);

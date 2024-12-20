@@ -3,30 +3,23 @@ import AbstractUniverseABI from "../abi/AbstractUniverseABI.json";
 import { NFT } from "../data/interface";
 
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
-
-// const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
-
-// const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${alchemyKey}`);
+const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
+const alchemyProvider = new ethers.JsonRpcProvider(
+  `https://eth-sepolia.g.alchemy.com/v2/${alchemyKey}`
+);
+const alchemyContract = new ethers.Contract(
+  contractAddress,
+  AbstractUniverseABI,
+  alchemyProvider
+);
 
 export const getTokenCounter = async (): Promise<number> => {
-  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-  const contract = new ethers.Contract(
-    contractAddress,
-    AbstractUniverseABI,
-    provider
-  );
-  const tokenCounter = await contract.tokenCounter();
+  const tokenCounter = await alchemyContract.tokenCounter();
   return Number(tokenCounter);
 };
 
 export const getTokenURI = async (tokenId: number): Promise<string> => {
-  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-  const contract = new ethers.Contract(
-    contractAddress,
-    AbstractUniverseABI,
-    provider
-  );
-  const tokenURI = await contract.tokenURI(tokenId);
+  const tokenURI = await alchemyContract.tokenURI(tokenId);
   return tokenURI;
 };
 
@@ -55,10 +48,7 @@ export const connectContract = async () => {
 };
 
 export async function checkContractExists() {
-  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-  console.log(contractAddress);
-
-  const code = await provider.getCode(contractAddress);
+  const code = await alchemyProvider.getCode(contractAddress);
   if (code === "0x") {
     console.log("Contract not found at this address.");
   } else {
@@ -67,15 +57,9 @@ export async function checkContractExists() {
 }
 
 export const getMintPrice = async () => {
-  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-  const contract = new ethers.Contract(
-    contractAddress,
-    AbstractUniverseABI,
-    provider
-  );
-  const mintPriceInWei = await contract.mintPriceInWei();
+  const mintPriceInWei = await alchemyContract.mintPriceInWei();
 
-  return ethers.formatEther(mintPriceInWei);
+  return mintPriceInWei;
 };
 
 export const mintNFT = async (recipient: string, mintPriceInEth: string) => {
@@ -104,22 +88,15 @@ export const mintNFT = async (recipient: string, mintPriceInEth: string) => {
 
 export const getOwnedNFTs = async (address: string): Promise<NFT[]> => {
   const nftList: NFT[] = [];
-  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-
-  const contract = new ethers.Contract(
-    contractAddress,
-    AbstractUniverseABI,
-    provider
-  );
 
   try {
-    const allTokens = await contract.getAllTokens();
+    const allTokens = await alchemyContract.getAllTokens();
 
     for (const tokenId of allTokens) {
-      const owner = await contract.ownerOf(tokenId);
+      const owner = await alchemyContract.ownerOf(tokenId);
 
       if (owner.toLowerCase() === address.toLowerCase()) {
-        const tokenURI = await contract.tokenURI(tokenId);
+        const tokenURI = await alchemyContract.tokenURI(tokenId);
 
         const response = await fetch(tokenURI);
         const metadata = await response.json();
@@ -168,22 +145,17 @@ export const setNFTForSale = async (
 
 export const getNFTsForSaleByOwner = async (owner: string) => {
   try {
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-    const contract = new ethers.Contract(
-      contractAddress,
-      AbstractUniverseABI,
-      provider
-    );
-
-    const tokensForSale = await contract.getTokensForSale();
+    const tokensForSale = await alchemyContract.getTokensForSale();
     const userTokensForSale: NFT[] = [];
 
     for (const tokenId of tokensForSale) {
-      const tokenOwner = await contract.ownerOf(tokenId);
+      const tokenOwner = await alchemyContract.ownerOf(tokenId);
       if (tokenOwner.toLowerCase() === owner.toLowerCase()) {
-        const tokenURI = await contract.tokenURI(tokenId);
+        const tokenURI = await alchemyContract.tokenURI(tokenId);
         const metadata = await fetch(tokenURI).then((res) => res.json());
-        const price = ethers.formatEther(await contract.tokenPrices(tokenId)); // Hämta priset i ETH
+        const price = ethers.formatEther(
+          await alchemyContract.tokenPrices(tokenId)
+        );
         userTokensForSale.push({
           tokenId: tokenId.toString(),
           metadata,
@@ -201,20 +173,15 @@ export const getNFTsForSaleByOwner = async (owner: string) => {
 
 export const getNFTsForSale = async () => {
   try {
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-    const contract = new ethers.Contract(
-      contractAddress,
-      AbstractUniverseABI,
-      provider
-    );
-
-    const tokensForSale = await contract.getTokensForSale();
+    const tokensForSale = await alchemyContract.getTokensForSale();
     const nftsForSale = [];
 
     for (const tokenId of tokensForSale) {
-      const tokenURI = await contract.tokenURI(tokenId);
+      const tokenURI = await alchemyContract.tokenURI(tokenId);
       const metadata = await fetch(tokenURI).then((res) => res.json());
-      const price = ethers.formatEther(await contract.tokenPrices(tokenId)); // Hämta pris i ETH
+      const price = ethers.formatEther(
+        await alchemyContract.tokenPrices(tokenId)
+      );
 
       nftsForSale.push({
         tokenId: tokenId.toString(),
