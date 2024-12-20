@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { getMintPrice, mintNFT } from "../utils/contract";
+import {
+  getMaxCount,
+  getMintPrice,
+  getTokenCounter,
+  mintNFT,
+} from "../utils/contract";
 import { connectWallet } from "../utils/metamask";
 import "../styles/components/MintCard.scss";
 
@@ -16,6 +21,23 @@ const MintCard: React.FC<MintCardProps> = ({
   mintPriceInWei,
 }) => {
   const [isMinting, setIsMinting] = useState(false);
+  const [tokenCounter, setTokenCounter] = useState<number | null>(null);
+  const [maxCount, setMaxCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchTokenCounter = async () => {
+      try {
+        const counter = await getTokenCounter();
+        const maxCount = await getMaxCount();
+        setTokenCounter(counter);
+        setMaxCount(maxCount);
+      } catch (error) {
+        console.error("Error fetching token counter:", error);
+      }
+    };
+
+    fetchTokenCounter();
+  }, []);
 
   const handleMint = async () => {
     setIsMinting(true);
@@ -57,10 +79,16 @@ const MintCard: React.FC<MintCardProps> = ({
           </p>
         </div>
         <div className="details">
-          <div className="price">
-            <img src="/eth.svg" alt="" />
-            <p>{ethers.formatEther(mintPriceInWei)} ETH</p>
+          <div className="info">
+            <div className="price">
+              <img src="/eth.svg" alt="" />
+              <p>{ethers.formatEther(mintPriceInWei)} ETH</p>
+            </div>
+            <p>
+              {tokenCounter} / {maxCount}
+            </p>
           </div>
+
           <button onClick={handleMint} disabled={isMinting}>
             {isMinting ? "Minting..." : "Mint"}
           </button>

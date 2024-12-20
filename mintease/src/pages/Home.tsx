@@ -1,41 +1,8 @@
 import { ethers } from "ethers";
-import { useState, useEffect } from "react";
-import { getTokenCounter } from "../utils/contract";
-import { connectWallet, disconnectWallet } from "../utils/metamask";
 import "../styles/pages/Home.scss";
 import MintCard from "../components/MintCard";
 
 const Home = () => {
-  const [address, setAddress] = useState<null | string>(null);
-  const [tokenCounter, setTokenCounter] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchTokenCounter = async () => {
-      try {
-        const counter = await getTokenCounter();
-
-        setTokenCounter(counter);
-      } catch (error) {
-        console.error("Error fetching token counter:", error);
-      }
-    };
-
-    fetchTokenCounter();
-  }, []);
-
-  const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
-  const tokenId = "1";
-
-  const handleConnect = async () => {
-    const result = await connectWallet();
-    setAddress(result);
-  };
-
-  const handleDisconnect = () => {
-    disconnectWallet();
-    setAddress(null);
-  };
-
   return (
     <div className="home">
       <section className="hero">
@@ -62,15 +29,6 @@ const Home = () => {
           mintPriceInWei={ethers.parseEther("0.01").toString()}
         />
       </section>
-      {!address && <button onClick={handleConnect}>Connect</button>}
-      {address && (
-        <>
-          <button onClick={handleDisconnect}>Disconnect</button>
-          <p>{address}</p>
-          {/* <WertCheckout address={address} contractAddress={contractAddress} tokenId={tokenId}/> */}
-        </>
-      )}
-      {tokenCounter && <p>{tokenCounter}</p>}
     </div>
   );
 };

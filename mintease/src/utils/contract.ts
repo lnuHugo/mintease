@@ -18,6 +18,11 @@ export const getTokenCounter = async (): Promise<number> => {
   return Number(tokenCounter);
 };
 
+export const getMaxCount = async (): Promise<number> => {
+  const maxCount = await alchemyContract.maxTokenCount();
+  return Number(maxCount);
+};
+
 export const getTokenURI = async (tokenId: number): Promise<string> => {
   const tokenURI = await alchemyContract.tokenURI(tokenId);
   return tokenURI;
