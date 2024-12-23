@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const Header = () => {
   const { signer, setSigner } = useWallet();
   const [address, setAddress] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -39,13 +40,21 @@ const Header = () => {
     }
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <header className="header">
-      <Link to="/" className="project-name">
+      <Link to="/" className="project-name" onClick={toggleMenu}>
         MintEase
       </Link>
       <nav>
-        <ul>
+        <button className="menu-icon" onClick={toggleMenu}>
+          <img src={isMenuOpen ? "/minus.svg" : "/menu.svg"} alt="Menu" />
+        </button>
+
+        <ul className={`menu ${isMenuOpen ? 'open' : ''}`} onClick={() => setIsMenuOpen(false)}>
           <li>
             <NavLink to="/marketplace">Marketplace</NavLink>
           </li>

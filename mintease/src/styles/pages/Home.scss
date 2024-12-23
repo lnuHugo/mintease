@@ -1,3 +1,5 @@
+@use '../variables';
+
 .home {
   .hero {
     height: calc(100vh - 100px);
@@ -13,13 +15,14 @@
       gap: 24px;
       max-width: 1200px;
       text-align: center;
+      font-size: variables.$heading-size-large;
 
       span {
         color: #c04d97;
       }
 
       p {
-        font-size: 32px;
+        font-size: variables.$text-size-extra-large;
       }
     }
 
@@ -37,4 +40,38 @@
     padding: 64px 0;
     background: linear-gradient(to bottom, white, #ffcbec, white);
   }
+}
+
+@media (max-width: 768px) {
+
+  .home {
+    .hero {
+  
+      .text {
+        gap: 24px;
+        text-align: center;
+        font-size: variables.$heading-size-regular;
+  
+        p {
+          font-size: variables.$text-size-medium;
+        }
+      }
+  
+      .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+  
+    .mint-section {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      align-items: center;
+      padding: 64px 0;
+      background: linear-gradient(to bottom, white, #ffcbec, white);
+    }
+  }
+
 }
