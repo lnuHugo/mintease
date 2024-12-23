@@ -4,7 +4,7 @@ import "../styles/pages/MintPage.scss";
 
 const MintPage = () => {
   return (
-    <div className="mint-page">
+    <section className="mint-page">
       <div className="image-container">
         <div className="text-div">
           <h3>Abstract Universe</h3>
@@ -80,7 +80,7 @@ const MintPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

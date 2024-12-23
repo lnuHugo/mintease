@@ -1,5 +1,5 @@
 .mint-card {
-  width: 670px;
+  max-width: 670px;
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -64,8 +64,72 @@
         &:hover {
           background-color: rgb(47, 47, 47);
         }
+      }
+    }
+  }
+}
 
-        &:disabled {
+@media (max-width: 768px) {
+  .mint-card {
+    max-width: 230px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  
+    .preview {
+      width: 230px;
+      height: 230px;
+      border-radius: 4px;
+    }
+  
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .text {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+        }
+      
+  
+      .details {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+  
+        .price {
+          display: flex;
+          gap: -2px;
+          align-items: center;
+
+          img {
+            width: 26px;
+            height: 26px;
+          }
+  
+          p {
+          }
+        }
+  
+        button {
+          padding: 8px;
+          border: none;
+          background-color: black;
+          color: white;
+          cursor: pointer;
+          width: 100%;
+  
+          &:hover {
+            background-color: rgb(47, 47, 47);
+          }
         }
       }
     }

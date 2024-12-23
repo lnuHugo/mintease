@@ -1,5 +1,4 @@
 .marketplace {
-  padding: 64px 80px;
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -31,20 +30,34 @@
       img {
       }
     }
-
-    .icon {
-      margin: 0;
-      padding: 8px;
-      border: 1px solid rgb(193, 193, 193);
-      border-radius: 8px;
+    .icons {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-
-      img {
-        color: rgb(193, 193, 193);
+      gap: 12px;
+      .icon {
+        margin: 0;
+        padding: 8px;
+        border: 1px solid rgb(193, 193, 193);
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+  
+        img {
+          color: rgb(193, 193, 193);
+        }
       }
     }
+    
+  }
+}
+
+@media (max-width: 576px) {
+  .marketplace {
+    .filter-div {
+      flex-direction: column;
+      align-items: start;
+    }
+
   }
 }

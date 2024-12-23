@@ -1,11 +1,11 @@
 .mint-page {
   display: flex;
   flex-direction: column;
-  padding: 0 80px;
   align-items: center;
+  padding: 0 32px;
 
   .image-container {
-    position: relative; // Viktigt för att positionera texten relativt bilden
+    position: relative;
     width: 100%;
     display: flex;
     overflow: hidden;
@@ -119,6 +119,145 @@
       gap: 32px;
       max-width: 480px;
       p {
+      }
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .mint-page {
+    .image-container {
+      .text-div {
+        padding: 32px;
+        gap: 8px;
+      }
+
+      img {
+        height: 250px;
+      }
+    }
+
+    .mint-section {
+      padding: 64px 40px 40px 40px;
+    }
+
+    .gallery {
+      padding: 48px 40px;
+      gap: 32px;
+
+      .grid {
+        gap: 24px;
+
+        img {
+          width: 250px;
+          height: 250px;
+        }
+      }
+
+      .button-div {
+        margin-top: 16px;
+      }
+    }
+
+    .about {
+      gap: 48px;
+      align-items: start;
+
+      .artist {
+        align-items: center;
+        gap: 32px;
+        width: 100%;
+
+        .img-container {
+          img {
+            height: auto;
+            object-fit: contain;
+          }
+        }
+      }
+
+      .art {
+        align-items: center;
+        gap: 32px;
+
+        img {
+          width: 300px;
+          height: 300px;
+        }
+      }
+
+      .text {
+        max-width: 70%;  // Minska textens bredd under 992px
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .mint-page {
+
+    .image-container {
+      .text-div {
+        padding: 16px;
+        gap: 4px;
+      }
+
+      img {
+        height: 200px; // Minska bildstorlek på mobil
+      }
+    }
+
+    .mint-section {
+      padding: 40px 20px 32px 20px; // Minska padding på mobil
+    }
+
+    .gallery {
+      padding: 32px 20px;
+      gap: 24px;
+
+      .grid {
+        gap: 16px;
+
+        img {
+          width: 200px; // Minska bildstorlek på mobil
+          height: 200px;
+        }
+      }
+
+      .button-div {
+        margin-top: 16px;
+      }
+    }
+
+    .about {
+      padding: 32px 20px;
+      gap: 32px;
+
+      .artist,
+      .art {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .artist .img-container {
+        display: none;
+
+        img {
+          width: 120px;
+          height: 160px;
+        }
+      }
+
+      
+
+      .art img {
+        width: 200px;
+        height: 200px;
+      }
+
+      .text {
+        max-width: 90%;
       }
     }
   }

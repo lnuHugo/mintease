@@ -45,7 +45,7 @@ const Marketplace = () => {
   };
 
   return (
-    <div className="marketplace">
+    <section className="marketplace">
       <h3>Nfts for Sale</h3>
       <div className="filter-div">
         <div className="sort" onClick={sortNfts}>
@@ -59,14 +59,16 @@ const Marketplace = () => {
             alt=""
           />
         </div>
-        <div className="icon">
-          <img src="/2x2-cell.svg" alt="" />
-        </div>
-        <div className="icon">
-          <img src="/table-rows.svg" alt="" />
-        </div>
-        <div className="icon">
-          <img src="/table.svg" alt="" />
+        <div className="icons">
+          <div className="icon">
+            <img src="/2x2-cell.svg" alt="" />
+          </div>
+          <div className="icon">
+            <img src="/table-rows.svg" alt="" />
+          </div>
+          <div className="icon">
+            <img src="/table.svg" alt="" />
+          </div>
         </div>
       </div>
       <div className="card-grid">
@@ -83,7 +85,7 @@ const Marketplace = () => {
           <p>No NFTs for sale.</p>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

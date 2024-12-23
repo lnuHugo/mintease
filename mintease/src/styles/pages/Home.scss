@@ -22,13 +22,15 @@
       }
 
       p {
-        font-size: variables.$text-size-extra-large;
+        font-size: variables.$text-size-medium;
       }
     }
 
     .buttons {
       display: flex;
       gap: 64px;
+      font-size: variables.$text-size-medium;
+      font-weight: 400;
     }
   }
 
@@ -42,14 +44,11 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
 
   .home {
     .hero {
-  
       .text {
-        gap: 24px;
-        text-align: center;
         font-size: variables.$heading-size-regular;
   
         p {
@@ -73,5 +72,4 @@
       background: linear-gradient(to bottom, white, #ffcbec, white);
     }
   }
-
 }
