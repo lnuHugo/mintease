@@ -2,14 +2,29 @@ import { Link, NavLink } from "react-router-dom";
 import "../styles/components/Header.scss";
 import { connectWallet, disconnectWallet } from "../utils/metamask";
 import { useWallet } from "../context/WalletContext";
+import { useEffect, useState } from "react";
 
 const Header = () => {
-  const { walletAddress, setWalletAddress } = useWallet();
+  const { signer, setSigner } = useWallet();
+  const [address, setAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (signer == null) {
+        setAddress(null);
+      } else {
+        const userAddress = await signer.getAddress();
+        setAddress(userAddress);
+      }
+    };
+
+    fetchAddress();
+  }, [signer]);
 
   const handleConnect = async () => {
     try {
-      const address = await connectWallet();
-      setWalletAddress(address);
+      const signer = await connectWallet();
+      setSigner(signer);
     } catch (error) {
       console.error(error);
     }
@@ -18,7 +33,7 @@ const Header = () => {
   const handleDisconnect = () => {
     try {
       disconnectWallet();
-      setWalletAddress(null);
+      setSigner(null);
     } catch (error) {
       console.error(error);
     }
@@ -41,11 +56,13 @@ const Header = () => {
             <NavLink to="/profile">Profile</NavLink>
           </li>
           <li>
-            {walletAddress ? (
+            {signer ? (
               <button onClick={handleDisconnect} className="logout-button">
                 <img src="/log-out.svg" alt="Log Out" />
                 <span className="wallet-address">
-                  {`${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`}
+                  {address
+                    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+                    : "Loading..."}
                 </span>
               </button>
             ) : (

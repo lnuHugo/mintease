@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   padding: 0 80px;
+  align-items: center;
 
   .image-container {
     position: relative; // Viktigt för att positionera texten relativt bilden
@@ -13,20 +14,112 @@
     .text-div {
       padding: 64px;
       border-radius: 12px;
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: rgba(255, 255, 255, 0.6);
       position: absolute;
-      top: 50%; // Flytta till mitten vertikalt
-      left: 50%; // Flytta till mitten horisontellt
-      transform: translate(-50%, -50%); // Justera för att centrera exakt
-      color: white; // Gör texten läsbar
-      text-align: center; // Centrera texten i blocket
-      z-index: 2; // Placera ovanpå bilden
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
     }
 
     img {
       object-fit: cover;
       width: 100%;
-      height: auto; // Se till att bilden inte förvrängs
+      height: auto;
+    }
+  }
+
+  .mint-section {
+    display: flex;
+    justify-content: center;
+    padding: 128px 80px 64px 80px;
+  }
+
+  .gallery {
+    display: flex;
+    flex-direction: column;
+    padding: 64px 80px;
+    gap: 48px;
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px;
+
+      img {
+        width: 300px;
+        height: 300px;
+        border-radius: 8px;
+        border: 2px solid black;
+      }
+    }
+
+    .button-div {
+      width: auto;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .about {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 64px 80px;
+    width: calc(100% + 160px);
+    box-sizing: border-box;
+    gap: 64px;
+    height: fit-content;
+    background: linear-gradient(to right, #bf5c9c, #ffd8f1);
+
+    .artist {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: fit-content;
+      gap: 64px;
+      max-width: 800px;
+
+      .img-container {
+        border-radius: 12px;
+        overflow: hidden;
+        height: fit-content;
+        height: 300px;
+
+        img {
+          width: 200px;
+          height: 300px;
+          height: auto;
+          object-fit: contain;
+        }
+      }
+    }
+    .art {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: fit-content;
+      gap: 64px;
+      max-width: 800px;
+
+      img {
+        width: 300px;
+        height: 300px;
+        border-radius: 12px;
+      }
+    }
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 480px;
+      p {
+      }
     }
   }
 }

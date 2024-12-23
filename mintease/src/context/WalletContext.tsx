@@ -1,8 +1,9 @@
+import { JsonRpcSigner } from "ethers";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface WalletContextType {
-  walletAddress: string | null;
-  setWalletAddress: (address: string | null) => void;
+  signer: JsonRpcSigner | null;
+  setSigner: (signer: JsonRpcSigner | null) => void;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -12,10 +13,10 @@ interface WalletProviderProps {
 }
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
 
   return (
-    <WalletContext.Provider value={{ walletAddress, setWalletAddress }}>
+    <WalletContext.Provider value={{ signer, setSigner }}>
       {children}
     </WalletContext.Provider>
   );

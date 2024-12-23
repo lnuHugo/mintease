@@ -1,0 +1,90 @@
+footer {
+  .bottom {
+    padding: 64px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    background-color: #502641;
+
+    .large {
+      font-size: 48px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 64px;
+
+      .btn-standard {
+        background-color: white;
+        color: black;
+      }
+
+      .btn-outline {
+        border: 1px solid white;
+        color: white;
+      }
+    }
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px 20px;
+
+    .footer-logo {
+      h1 {
+        font-size: 24px;
+      }
+    }
+
+    .footer-nav {
+      ul {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+
+        li {
+          a {
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+
+            &:hover {
+              color: #502641;
+            }
+          }
+        }
+      }
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+
+      .social-icon {
+        width: 24px;
+        height: 24px;
+        transition: transform 0.3s;
+
+        &:hover {
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+  }
+}

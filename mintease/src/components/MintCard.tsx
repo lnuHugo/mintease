@@ -6,8 +6,8 @@ import {
   getTokenCounter,
   mintNFT,
 } from "../utils/contract";
-import { connectWallet } from "../utils/metamask";
 import "../styles/components/MintCard.scss";
+import { useWallet } from "../context/WalletContext";
 
 interface MintCardProps {
   collectionName: string;
@@ -23,6 +23,7 @@ const MintCard: React.FC<MintCardProps> = ({
   const [isMinting, setIsMinting] = useState(false);
   const [tokenCounter, setTokenCounter] = useState<number | null>(null);
   const [maxCount, setMaxCount] = useState<number | null>(null);
+  const { signer } = useWallet();
 
   useEffect(() => {
     const fetchTokenCounter = async () => {
@@ -43,16 +44,17 @@ const MintCard: React.FC<MintCardProps> = ({
     setIsMinting(true);
 
     try {
-      const recipient = await connectWallet();
-      if (recipient == null) return;
+      if (!signer) {
+        return;
+      }
 
       const mintPrice = await getMintPrice();
       console.log(mintPrice);
 
-      const mintPriceInEth = ethers.formatEther(mintPrice);
-      console.log(mintPriceInEth);
+      // const mintPriceInEth = ethers.formatEther(mintPrice);
+      // console.log(mintPriceInEth);
 
-      await mintNFT(recipient, mintPriceInEth);
+      await mintNFT(signer, mintPrice);
       alert("NFT successfully minted!");
     } catch (error) {
       console.error("Minting failed:", error);

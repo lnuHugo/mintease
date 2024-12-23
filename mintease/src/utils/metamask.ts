@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, JsonRpcSigner } from "ethers";
 import { checkContractExists } from "./contract";
 
 declare global {
@@ -7,15 +7,14 @@ declare global {
   }
 }
 
-export const connectWallet = async (): Promise<string | null> => {
+export const connectWallet = async (): Promise<JsonRpcSigner | null> => {
   if (window.ethereum) {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       checkContractExists();
       const accounts = await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
-      const address = await signer.getAddress();
-      return address;
+      return signer;
     } catch (error) {
       console.error("Error connecting wallet:", error);
       return null;

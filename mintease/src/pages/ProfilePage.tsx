@@ -8,6 +8,7 @@ import {
 } from "../utils/contract";
 import { NFT } from "../data/interface";
 import { useWallet } from "../context/WalletContext";
+// import { getAddress } from "ethers";
 
 const ProfilePage = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
@@ -17,16 +18,22 @@ const ProfilePage = () => {
     null
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { walletAddress } = useWallet();
+  const { signer } = useWallet();
 
   useEffect(() => {
     const fetchNFTs = async () => {
       try {
-        if (!walletAddress) return;
-        const ownedNFTs = await getOwnedNFTs(walletAddress);
+        if (!signer) {
+          setNfts([]);
+          setNftsForSale([]);
+          return;
+        }
+
+        const address = await signer.getAddress();
+        const ownedNFTs = await getOwnedNFTs(address);
         setNfts(ownedNFTs);
 
-        const forSaleNFTs = await getNFTsForSaleByOwner(walletAddress);
+        const forSaleNFTs = await getNFTsForSaleByOwner(address);
 
         setNftsForSale(forSaleNFTs);
       } catch (error) {
@@ -35,7 +42,7 @@ const ProfilePage = () => {
     };
 
     fetchNFTs();
-  }, [nfts]);
+  }, [signer]);
 
   const handlePriceChange = (tokenId: string, value: string) => {
     setPrices((prevPrices) => ({

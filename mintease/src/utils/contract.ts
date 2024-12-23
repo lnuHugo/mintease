@@ -1,6 +1,9 @@
 import { ethers } from "ethers";
 import AbstractUniverseABI from "../abi/AbstractUniverseABI.json";
 import { NFT } from "../data/interface";
+import { createSignature, prepareMintNFTData } from "./generateData";
+import { JsonRpcSigner } from "ethers";
+import { mintWithWert } from "../services/wert";
 
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
@@ -67,7 +70,10 @@ export const getMintPrice = async () => {
   return mintPriceInWei;
 };
 
-export const mintNFT = async (recipient: string, mintPriceInEth: string) => {
+export const mintNFT = async (
+  signer: JsonRpcSigner,
+  mintPriceInWei: string
+) => {
   try {
     const contract = await connectContract();
 
@@ -75,16 +81,31 @@ export const mintNFT = async (recipient: string, mintPriceInEth: string) => {
       throw new Error("Failed to connect to contract");
     }
 
-    const mintPriceInWei = ethers.parseEther(mintPriceInEth);
+    const mintPriceInEth = parseFloat(
+      ethers.formatEther(mintPriceInWei)
+    ).toString();
 
-    const tx = await contract.mintNFT(recipient, {
+    const recipient = await signer.getAddress();
+    const signature = await createSignature(signer, mintPriceInWei);
+    const mintNFTData = prepareMintNFTData(recipient);
+
+    console.log(recipient);
+
+    if (!signature) return;
+
+    mintWithWert({
+      commodity_amount: Number(mintPriceInEth),
+      sc_input_data: mintNFTData,
+      signature,
+    });
+
+    /* const tx = await contract.mintNFT(recipient, {
       value: mintPriceInWei,
     });
 
-    await tx.wait();
+    await tx.wait(); */
 
     console.log("NFT minted successfully!");
-    return tx;
   } catch (error) {
     console.error("Minting failed:", error);
     throw error;

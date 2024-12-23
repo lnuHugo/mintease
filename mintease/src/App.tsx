@@ -2,15 +2,17 @@ import AppRouter from "./AppRouter";
 import Header from "./components/Header";
 import { BrowserRouter as Router } from "react-router-dom";
 import { WalletProvider } from "./context/WalletContext";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <WalletProvider>
-      <Router>
+    <Router>
+      <WalletProvider>
         <Header />
         <AppRouter />
-      </Router>
-    </WalletProvider>
+        <Footer />
+      </WalletProvider>
+    </Router>
   );
 }
 
