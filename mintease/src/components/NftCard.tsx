@@ -16,15 +16,17 @@ interface NftCardProps {
   };
   buttonText: string;
   onButtonClick: () => void;
+  format: string;
 }
 
 const NftCard: React.FC<NftCardProps> = ({
   nft,
   buttonText,
   onButtonClick,
+  format
 }) => {
   return (
-    <div className="nft-card">
+    <div className={`nft-card ${format}`}>
       <img
         src={nft.metadata.image}
         alt={nft.metadata.name}

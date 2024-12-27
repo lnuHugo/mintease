@@ -18,18 +18,17 @@ export const mintWithWert = ({
   signature,
 }: WertConfig) => {
   const wertWidget = new WertWidget({
-    partner_id: partnerId, // Korrekt namn på parametern
-    origin: "https://sandbox.wert.io", // Ange ursprung för sandbox-miljö
-    commodity: "ETH", // Kryptovaluta (kan vara ETH, BTC, etc.)
-    network: "sepolia", // Blockkedjanätverk (t.ex. sepolia, mainnet)
-    commodity_amount, // Mängden kryptovaluta
-    sc_address: contractAddress, // Smarta kontraktets adress
-    sc_input_data, // Indata för smart kontrakt
-    signature, // Digital signatur
+    partner_id: partnerId, 
+    origin: "https://sandbox.wert.io",
+    commodity: "ETH",
+    network: "sepolia",
+    commodity_amount,
+    sc_address: contractAddress,
+    sc_input_data,
+    signature,
   });
 
   console.log(wertWidget);
 
-  // Öppna widgeten
   wertWidget.open();
 };

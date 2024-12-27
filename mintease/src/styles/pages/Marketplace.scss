@@ -2,11 +2,17 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+  min-height: calc(100vh - 100px - 287px);
 
   .card-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
+
+    &.row {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
   }
 
   .filter-div {
@@ -33,6 +39,7 @@
     .icons {
       display: flex;
       gap: 12px;
+
       .icon {
         margin: 0;
         padding: 8px;
@@ -42,6 +49,11 @@
         justify-content: center;
         align-items: center;
         cursor: pointer;
+        transition: background-color 0.3s;
+
+        &.active {
+          border: 1px solid rgb(78, 78, 78);
+        }
   
         img {
           color: rgb(193, 193, 193);

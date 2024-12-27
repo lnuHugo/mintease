@@ -8,6 +8,7 @@ import {
 } from "../utils/contract";
 import "../styles/components/MintCard.scss";
 import { useWallet } from "../context/WalletContext";
+import { connectWallet } from "../utils/metamask";
 
 interface MintCardProps {
   collectionName: string;
@@ -23,7 +24,7 @@ const MintCard: React.FC<MintCardProps> = ({
   const [isMinting, setIsMinting] = useState(false);
   const [tokenCounter, setTokenCounter] = useState<number | null>(null);
   const [maxCount, setMaxCount] = useState<number | null>(null);
-  const { signer } = useWallet();
+  const { signer, setSigner } = useWallet();
 
   useEffect(() => {
     const fetchTokenCounter = async () => {
@@ -40,21 +41,37 @@ const MintCard: React.FC<MintCardProps> = ({
     fetchTokenCounter();
   }, []);
 
+  const handleLogin = async () => {
+    try {
+      const signer = await connectWallet();
+      setSigner(signer);
+      return signer
+    } catch (error) {
+      console.error(error);
+      return null
+    }
+  }
+
   const handleMint = async () => {
     setIsMinting(true);
 
     try {
-      if (!signer) {
-        return;
-      }
+      let activeSigner = signer;
+
+    if (!activeSigner) {
+      activeSigner = await handleLogin();
+    }
+
+    if (!activeSigner) {
+      throw new Error("Signer is not available");
+    }
 
       const mintPrice = await getMintPrice();
-      console.log(mintPrice);
 
       // const mintPriceInEth = ethers.formatEther(mintPrice);
       // console.log(mintPriceInEth);
 
-      await mintNFT(signer, mintPrice);
+      await mintNFT(activeSigner, mintPrice);
       alert("NFT successfully minted!");
     } catch (error) {
       console.error("Minting failed:", error);

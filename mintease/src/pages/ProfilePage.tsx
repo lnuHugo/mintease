@@ -17,7 +17,7 @@ const ProfilePage = () => {
   const [submittingTokenId, setSubmittingTokenId] = useState<string | null>(
     null
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [removingTokenId, setRemovingTokenId] = useState<string | null>(null);
   const { signer } = useWallet();
 
   useEffect(() => {
@@ -31,10 +31,14 @@ const ProfilePage = () => {
 
         const address = await signer.getAddress();
         const ownedNFTs = await getOwnedNFTs(address);
-        setNfts(ownedNFTs);
-
         const forSaleNFTs = await getNFTsForSaleByOwner(address);
 
+        const notForSaleNFTs = ownedNFTs.filter(
+          (nft) =>
+            !forSaleNFTs.some((saleNft) => saleNft.tokenId === nft.tokenId)
+        );
+
+        setNfts(notForSaleNFTs);
         setNftsForSale(forSaleNFTs);
       } catch (error) {
         console.error("Error fetching NFTs:", error);
@@ -62,6 +66,11 @@ const ProfilePage = () => {
 
       await setNFTForSale(parseInt(id), price);
       alert(`NFT with tokenId ${id} is now listed for ${price} ETH.`);
+      setNfts((prevNfts) => prevNfts.filter((nft) => nft.tokenId !== id));
+setNftsForSale((prevNftsForSale) => [
+  ...prevNftsForSale,
+  { ...nfts.find((nft) => nft.tokenId === id)!, price },
+]);
     } catch (error) {
       alert("Failed to list NFT for sale. See console for details.");
       console.error(error);
@@ -71,27 +80,34 @@ const ProfilePage = () => {
   };
 
   const handleRemoveFromSale = async (tokenId: number) => {
-    setIsSubmitting(true);
+    setRemovingTokenId(tokenId.toString());
     try {
       await removeNFTFromSale(tokenId);
       alert(`NFT with tokenId ${tokenId} removed from sale.`);
 
-      setNfts((prevNfts) =>
-        prevNfts.map((nft) =>
-          Number(nft.tokenId) === tokenId ? { ...nft, price: null } : nft
-        )
+      setNftsForSale((prevNfts) =>
+        prevNfts.filter((nft) => Number(nft.tokenId) !== tokenId)
       );
     } catch (error) {
       alert("Failed to remove NFT from sale. See console for details.");
       console.error(error);
+    } finally {
+      setRemovingTokenId(null);
+      setNftsForSale((prevNfts) =>
+        prevNfts.filter((nft) => Number(nft.tokenId) !== tokenId)
+      );
+      const nftToAddBack = nftsForSale.find((nft) => Number(nft.tokenId) === tokenId);
+    if (nftToAddBack) {
+      setNfts((prevNfts) => [...prevNfts, nftToAddBack]);
     }
-    setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="profile-page">
       <div className="nft-section">
         <h2>Your NFTs</h2>
+        {!signer && <p>Please log in to see your NFTs</p>}
         <div className="nft-grid">
           {nfts &&
             nfts.map((nft, index) => (
@@ -129,7 +145,7 @@ const ProfilePage = () => {
       </div>
 
       <div className="nft-section">
-        <h2>NFTs for Sale</h2>
+        <h2>Your NFTs for Sale</h2>
         <div className="nft-grid">
           {nftsForSale.length > 0 ? (
             nftsForSale.map((nft, index) => (
@@ -143,14 +159,16 @@ const ProfilePage = () => {
                 <p>Price: {nft.price} ETH</p>
                 <button
                   onClick={() => handleRemoveFromSale(Number(nft.tokenId))}
-                  disabled={isSubmitting}
+                  disabled={removingTokenId === nft.tokenId.toString()}
                 >
-                  {isSubmitting ? "Removing..." : "Remove from Sale"}
+                  {removingTokenId === nft.tokenId.toString()
+                    ? "Removing..."
+                    : "Remove from Sale"}
                 </button>
               </div>
             ))
           ) : (
-            <p>No NFTs for sale.</p>
+            <p>You have no listed NFTs for sale.</p>
           )}
         </div>
       </div>

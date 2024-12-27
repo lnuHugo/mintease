@@ -3,14 +3,33 @@
   border: 1px solid #b4b4b4;
   width: fit-content;
   border-radius: 8px;
+
+  &.row {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+
+    img {
+      order: 2;
+      width: 128px;
+      height: 128px;
+    }
+
+    .content {
+      padding: 0;
+    }
+  }
+
   img {
     border-radius: 4px;
     width: 230px;
     height: 230px;
+    align-self: center;
   }
   .content {
     display: flex;
-    flex-direction: column;
+    flex-direction: column;justify-content: space-between;
     gap: 16px;
     padding: 16px 0 0 0;
 
@@ -37,6 +56,19 @@
       background-color: black;
       color: white;
       border-radius: 4px;
+      cursor: pointer;
     }
   }
 }
+
+@media (max-width: 576px) {
+  .nft-card {
+    padding: 8px;
+  
+    &.row {
+      img {
+        width: 96px;
+        height: 96px;
+      }
+    }
+  }}

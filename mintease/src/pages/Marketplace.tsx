@@ -6,6 +6,7 @@ import { buyNFT, getNFTsForSale } from "../utils/contract";
 const Marketplace = () => {
   const [nftsForSale, setNftsForSale] = useState<any[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [grid, setGrid] = useState("small");
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -31,6 +32,7 @@ const Marketplace = () => {
     setNftsForSale(sortedNfts);
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
+
   const handleBuyNFT = async (tokenId: number) => {
     try {
       await buyNFT(tokenId);
@@ -60,18 +62,21 @@ const Marketplace = () => {
           />
         </div>
         <div className="icons">
-          <div className="icon">
-            <img src="/2x2-cell.svg" alt="" />
+          <div
+            className={`icon ${grid === "small" ? "active" : ""}`}
+            onClick={() => setGrid("small")}
+          >
+            <img src="/2x2-cell.svg" alt="Small grid layout" />
           </div>
-          <div className="icon">
-            <img src="/table-rows.svg" alt="" />
-          </div>
-          <div className="icon">
-            <img src="/table.svg" alt="" />
+          <div
+            className={`icon ${grid === "row" ? "active" : ""}`}
+            onClick={() => setGrid("row")}
+          >
+            <img src="/table-rows.svg" alt="Row layout" />
           </div>
         </div>
       </div>
-      <div className="card-grid">
+      <div className={`card-grid ${grid}`}>
         {nftsForSale.length > 0 ? (
           nftsForSale.map((nft, index) => (
             <NftCard
@@ -79,6 +84,7 @@ const Marketplace = () => {
               nft={nft}
               buttonText="Buy Now"
               onButtonClick={() => handleBuyNFT(Number(nft.tokenId))}
+              format={grid}
             />
           ))
         ) : (

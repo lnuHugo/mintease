@@ -81,29 +81,38 @@ export const mintNFT = async (
       throw new Error("Failed to connect to contract");
     }
 
+    const recipient = await signer.getAddress();
+
     const mintPriceInEth = parseFloat(
       ethers.formatEther(mintPriceInWei)
     ).toString();
 
-    const recipient = await signer.getAddress();
-    const signature = await createSignature(signer, mintPriceInWei);
+    
     const mintNFTData = prepareMintNFTData(recipient);
 
-    console.log(recipient);
-
-    if (!signature) return;
-
-    mintWithWert({
+    const options = {
+      address: recipient,
+      commodity: "ETH",
+      network: "sepolia",
       commodity_amount: Number(mintPriceInEth),
+      sc_address: contractAddress,
       sc_input_data: mintNFTData,
-      signature,
-    });
+    };
 
-    /* const tx = await contract.mintNFT(recipient, {
+    const signedOptions = await createSignature(options);
+
+    if (!signedOptions) return;
+    console.log(signedOptions);
+
+    mintWithWert(signedOptions);
+ 
+/*
+    const tx = await contract.mintNFT(recipient, {
       value: mintPriceInWei,
     });
 
-    await tx.wait(); */
+    await tx.wait();
+    */
 
     console.log("NFT minted successfully!");
   } catch (error) {

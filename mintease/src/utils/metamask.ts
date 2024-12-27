@@ -12,7 +12,7 @@ export const connectWallet = async (): Promise<JsonRpcSigner | null> => {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       checkContractExists();
-      const accounts = await provider.send("eth_requestAccounts", []);
+      // const accounts = await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
       return signer;
     } catch (error) {

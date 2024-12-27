@@ -1,13 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import "../styles/components/Footer.scss";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   return (
     <footer>
       <div className="bottom">
         <p className="large">Use MintEase Now!</p>
         <div className="buttons">
-          <button className="btn-standard">Explore NFTs</button>
-          <button className="btn-outline">List Artwork</button>
+          <button className="btn-standard" onClick={() => navigate("/marketplace")}>Explore NFTs</button>
+          <button className="btn-outline" onClick={() => navigate("/profile")}>List Artwork</button>
         </div>
       </div>
       <div className="footer-container">

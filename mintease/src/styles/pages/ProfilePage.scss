@@ -1,10 +1,20 @@
 .profile-page {
   padding: 0 80px;
+  min-height: calc(100vh - 100px - 287px);
+
+  .nft-section {
+    padding-bottom: 48px;
+     
+    h2 {
+      padding-bottom: 16px;
+
+    }
+  }
 
   .nft-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
     .nft-card {
       padding: 16px;
       border: 1px solid rgb(193, 193, 193);
@@ -54,6 +64,11 @@
         border-radius: 4px;
         background-color: black;
         color: white;
+        cursor: pointer;
+
+        &:hover {
+          background-color: rgb(47, 47, 47);
+        }
       }
     }
   }

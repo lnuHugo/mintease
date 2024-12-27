@@ -1,4 +1,8 @@
-import { JsonRpcSigner, ethers } from "ethers";
+import { ethers } from "ethers";
+import { signSmartContractData } from '@wert-io/widget-sc-signer';
+
+// 54ba0f27000000000000000000000000ef412930dd0b2b7bc8121f7333b0d4d09659a553
+const wertKey = import.meta.env.VITE_WERT_PRIVATE_KEY;
 
 export const prepareMintNFTData = (recipientAddress: string) => {
   const abi = [
@@ -23,44 +27,17 @@ export const prepareMintNFTData = (recipientAddress: string) => {
     },
   ];
 
-  // Create an Interface instance
   const iface = new ethers.Interface(abi);
-
-  // Encode the function call
-  // const encodedData = iface.encodeFunctionData("mintNFT", [recipientAddress]);
-
-  const abiCoder = new ethers.AbiCoder();
-  const encodedData = abiCoder.encode(["address"], [recipientAddress]);
-
-  console.log(encodedData);
+  const hexString = iface.encodeFunctionData("mintNFT", [recipientAddress]);
+  const encodedData = hexString.slice(2);
 
   return encodedData;
 };
 
 export async function createSignature(
-  signer: JsonRpcSigner,
-  mintPriceInWei: string
-) {
-  if (signer) {
-    const abiCoder = new ethers.AbiCoder();
-    const address = await signer.getAddress();
-
-    const mintPriceInEth = ethers.formatUnits(mintPriceInWei, 18);
-
-    const message = `
-      By signing this message, you confirm the minting of an NFT.
-      Address: ${address}
-      Mint Price: ${mintPriceInEth} ETH
-    `;
-
-    const mintNFTData = abiCoder.encode(
-      ["address", "uint256"],
-      [address, mintPriceInWei]
-    );
-
-    const signature = await signer.signMessage(message);
-
-    console.log("Signatur:", signature);
-    return signature;
+  options: any,
+) {  
+  const signedOptions = signSmartContractData(options, wertKey);
+    
+    return signedOptions;
   }
-}

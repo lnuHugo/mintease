@@ -63,6 +63,10 @@
       width: auto;
       display: flex;
       justify-content: center;
+
+      button {
+        cursor: pointer;
+      }
     }
   }
 
@@ -187,7 +191,7 @@
       }
 
       .text {
-        max-width: 70%;  // Minska textens bredd under 992px
+        max-width: 70%;
       }
     }
   }
@@ -203,12 +207,12 @@
       }
 
       img {
-        height: 200px; // Minska bildstorlek på mobil
+        height: 200px;
       }
     }
 
     .mint-section {
-      padding: 40px 20px 32px 20px; // Minska padding på mobil
+      padding: 40px 20px 32px 20px;
     }
 
     .gallery {
@@ -219,7 +223,7 @@
         gap: 16px;
 
         img {
-          width: 200px; // Minska bildstorlek på mobil
+          width: 200px;
           height: 200px;
         }
       }

@@ -40,11 +40,23 @@ body {
   .btn-standard {
     background-color: #000000;
     color: white;
+    cursor: pointer;
+
+    &:hover {
+          background-color: rgb(47, 47, 47);
+        }
+    
   }
 
   .btn-outline {
     background-color: transparent;
     border: 1px solid black;
+    cursor: pointer;
+
+
+    &:hover {
+      background-color: rgba(196, 196, 196, 0.2);
+    }
   }
 
   section {

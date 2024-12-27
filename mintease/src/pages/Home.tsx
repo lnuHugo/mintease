@@ -1,8 +1,11 @@
 import { ethers } from "ethers";
 import "../styles/pages/Home.scss";
 import MintCard from "../components/MintCard";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="home">
       <section className="hero">
@@ -13,12 +16,22 @@ const Home = () => {
           </h1>
           <p>
             The simplest platform to mint and purchase NFTs using fiat payments.
-            No crypto wallet? No problem.
+            No crypto funds? No problem.
           </p>
         </div>
         <div className="buttons">
-          <button className="btn-standard">Explore Collection</button>
-          <button className="btn-outline">List Artwork</button>
+          <button
+            className="btn-standard"
+            onClick={() => navigate("/mint")}
+          >
+            Explore Collection
+          </button>
+          <button
+            className="btn-outline"
+            onClick={() => navigate("/profile")}
+          >
+            List Artwork
+          </button>
         </div>
       </section>
       <section className="mint-section">
