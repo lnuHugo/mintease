@@ -6,9 +6,13 @@ interface WertCheckoutProps {
   tokenId: string;
 }
 
-const WertCheckout: React.FC<WertCheckoutProps> = ({ address, contractAddress, tokenId }) => {
-    const partnerId = import.meta.env.VITE_WERT_PARTNER_ID;
-    const chainId = import.meta.env.VITE_CHAIN_ID;
+const WertCheckout: React.FC<WertCheckoutProps> = ({
+  address,
+  contractAddress,
+  tokenId,
+}) => {
+  const partnerId = import.meta.env.VITE_WERT_PARTNER_ID;
+  const chainId = import.meta.env.VITE_CHAIN_ID;
   const widgetRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {

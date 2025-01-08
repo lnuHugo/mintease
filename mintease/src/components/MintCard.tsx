@@ -45,12 +45,12 @@ const MintCard: React.FC<MintCardProps> = ({
     try {
       const signer = await connectWallet();
       setSigner(signer);
-      return signer
+      return signer;
     } catch (error) {
       console.error(error);
-      return null
+      return null;
     }
-  }
+  };
 
   const handleMint = async () => {
     setIsMinting(true);
@@ -58,13 +58,13 @@ const MintCard: React.FC<MintCardProps> = ({
     try {
       let activeSigner = signer;
 
-    if (!activeSigner) {
-      activeSigner = await handleLogin();
-    }
+      if (!activeSigner) {
+        activeSigner = await handleLogin();
+      }
 
-    if (!activeSigner) {
-      throw new Error("Signer is not available");
-    }
+      if (!activeSigner) {
+        throw new Error("Signer is not available");
+      }
 
       const mintPrice = await getMintPrice();
 
@@ -72,7 +72,6 @@ const MintCard: React.FC<MintCardProps> = ({
       // console.log(mintPriceInEth);
 
       await mintNFT(activeSigner, mintPrice);
-      alert("NFT successfully minted!");
     } catch (error) {
       console.error("Minting failed:", error);
       alert("Minting failed. See console for details.");

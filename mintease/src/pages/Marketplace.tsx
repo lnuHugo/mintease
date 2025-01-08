@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import NftCard from "../components/NftCard";
 import "../styles/pages/Marketplace.scss";
 import { buyNFT, getNFTsForSale } from "../utils/contract";
+import { useWallet } from "../context/WalletContext";
+import { connectWallet } from "../utils/metamask";
 
 const Marketplace = () => {
   const [nftsForSale, setNftsForSale] = useState<any[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [grid, setGrid] = useState("small");
+  const { signer, setSigner } = useWallet();
 
   useEffect(() => {
     const fetchListings = async () => {
       const nfts = await getNFTsForSale();
-      console.log(nfts);
       setNftsForSale(nfts);
     };
     fetchListings();
@@ -35,8 +37,16 @@ const Marketplace = () => {
 
   const handleBuyNFT = async (tokenId: number) => {
     try {
-      await buyNFT(tokenId);
-      alert(`NFT with tokenId ${tokenId} purchased successfully!`);
+      let activeSigner = signer;
+
+      if (!activeSigner) {
+        const signer = await connectWallet();
+        if (!signer) return;
+        activeSigner = signer;
+        setSigner(signer);
+      }
+
+      await buyNFT(tokenId, activeSigner);
       setNftsForSale((prevNfts) =>
         prevNfts.filter((nft) => nft.tokenId !== tokenId)
       );

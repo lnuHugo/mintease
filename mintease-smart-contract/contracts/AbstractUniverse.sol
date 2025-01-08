@@ -92,7 +92,7 @@ contract AbstractUniverse is ERC721URIStorage, Ownable {
         tokenSellers[tokenId] = address(0);
     }
 
-    function buyNFT(uint256 tokenId) public payable {
+    function buyNFT(uint256 tokenId, address recipient) public payable {
         uint256 price = tokenPrices[tokenId];
         address seller = tokenSellers[tokenId];
 
@@ -104,9 +104,9 @@ contract AbstractUniverse is ERC721URIStorage, Ownable {
 
         payable(seller).transfer(msg.value);
 
-        _safeTransfer(seller, msg.sender, tokenId, "");
+        _safeTransfer(seller, recipient, tokenId, "");
 
-        emit TokenSold(tokenId, msg.value, msg.sender);
+        emit TokenSold(tokenId, msg.value, recipient);
     }
 
     function getAllTokens() public view returns (uint256[] memory) {

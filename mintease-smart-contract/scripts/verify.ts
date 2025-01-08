@@ -1,7 +1,7 @@
 import { ethers, run } from "hardhat";
 
 async function main() {
-  const contractAddress = "0xD6701Ae162ecbb793A0ec99729b85fD75340cf44";
+  const contractAddress = "0x4442cF034f418fae667c844611f52459d6AE4618";
 
   const mintPriceInWei = ethers.parseUnits("0.01", "ether");
 

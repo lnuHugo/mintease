@@ -1,9 +1,13 @@
 import { ethers } from "ethers";
 import AbstractUniverseABI from "../abi/AbstractUniverseABI.json";
 import { NFT } from "../data/interface";
-import { createSignature, prepareMintNFTData } from "./generateData";
+import {
+  createSignature,
+  prepareBuyNFTData,
+  prepareMintNFTData,
+} from "./generateData";
 import { JsonRpcSigner } from "ethers";
-import { mintWithWert } from "../services/wert";
+import { buyWithWert, mintWithWert } from "../services/wert";
 
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 const alchemyKey = import.meta.env.VITE_ALCHEMY_KEY;
@@ -87,7 +91,6 @@ export const mintNFT = async (
       ethers.formatEther(mintPriceInWei)
     ).toString();
 
-    
     const mintNFTData = prepareMintNFTData(recipient);
 
     const options = {
@@ -105,8 +108,8 @@ export const mintNFT = async (
     console.log(signedOptions);
 
     mintWithWert(signedOptions);
- 
-/*
+
+    /*
     const tx = await contract.mintNFT(recipient, {
       value: mintPriceInWei,
     });
@@ -232,7 +235,10 @@ export const getNFTsForSale = async () => {
   }
 };
 
-export const buyNFT = async (tokenId: number): Promise<void> => {
+export const buyNFT = async (
+  tokenId: number,
+  signer: JsonRpcSigner
+): Promise<void> => {
   try {
     const contract = await connectContract();
 
@@ -241,16 +247,50 @@ export const buyNFT = async (tokenId: number): Promise<void> => {
     }
 
     const price: bigint = await contract.tokenPrices(tokenId);
+    const priceInEther = parseFloat(ethers.formatEther(price));
+
+    const recipient = await signer.getAddress();
 
     if (!price || price === 0n) {
       throw new Error("NFT is not listed for sale.");
     }
 
-    const tx = await contract.buyNFT(tokenId, {
+    const mintNFTData = prepareBuyNFTData(tokenId, recipient);
+
+    const tokenURI = await getTokenURI(tokenId);
+    const metadata = await fetch(tokenURI).then((res) => res.json());
+
+    const options = {
+      address: recipient,
+      commodity: "ETH",
+      network: "sepolia",
+      commodity_amount: priceInEther,
+      sc_address: contractAddress,
+      sc_input_data: mintNFTData,
+    };
+
+    const signedOptions = await createSignature(options);
+
+    if (!signedOptions) return;
+    console.log(signedOptions);
+
+    const extra = {
+      item_info: {
+        author: "MintEase",
+        author_image_url:
+          "https://gateway.pinata.cloud/ipfs/bafkreiai3byzljvttel7ufjtu3oep4hfkljhzpyxpjnickosqbv4hxqaq4",
+        image_url: metadata.image,
+        name: metadata.name,
+        category: "Abstract Universe",
+      },
+    };
+
+    buyWithWert(signedOptions, extra);
+    /* const tx = await contract.buyNFT(tokenId, {
       value: price,
     });
 
-    await tx.wait();
+    await tx.wait(); */
 
     console.log(`NFT with tokenId ${tokenId} purchased successfully!`);
   } catch (error) {

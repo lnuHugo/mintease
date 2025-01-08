@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
-import { signSmartContractData } from '@wert-io/widget-sc-signer';
+import { signSmartContractData } from "@wert-io/widget-sc-signer";
 
-// 54ba0f27000000000000000000000000ef412930dd0b2b7bc8121f7333b0d4d09659a553
 const wertKey = import.meta.env.VITE_WERT_PRIVATE_KEY;
 
 export const prepareMintNFTData = (recipientAddress: string) => {
@@ -34,10 +33,37 @@ export const prepareMintNFTData = (recipientAddress: string) => {
   return encodedData;
 };
 
-export async function createSignature(
-  options: any,
-) {  
+export const prepareBuyNFTData = (tokenId: number, recipient: string) => {
+  const abi = [
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "buyNFT",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+  ];
+
+  const iface = new ethers.Interface(abi);
+  const hexString = iface.encodeFunctionData("buyNFT", [tokenId, recipient]);
+  const encodedData = hexString.slice(2);
+
+  return encodedData;
+};
+
+export async function createSignature(options: any) {
   const signedOptions = signSmartContractData(options, wertKey);
-    
-    return signedOptions;
-  }
+
+  return signedOptions;
+}
